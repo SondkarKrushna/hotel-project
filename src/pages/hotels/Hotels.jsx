@@ -249,9 +249,9 @@ const Hotels = () => {
       console.error("API ERROR:", error);
 
       const errorMessage =
-        error?.data?.message ||     // backend message
-        error?.error ||             // fetchBaseQuery error
-        error?.message ||           // generic error
+        error?.data?.message ||     
+        error?.error ||            
+        error?.message ||          
         "Something went wrong";
 
       toast.error(errorMessage);
@@ -526,14 +526,12 @@ const Hotels = () => {
                             <span className="text-[10px] font-medium text-amber-500">Pending</span>
                           </div>
                         ) : (
-                          <span className={`flex-shrink-0 inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-semibold ${
-                            status === "approved"
+                          <span className={`flex-shrink-0 inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-semibold ${status === "approved"
                               ? "bg-emerald-50 text-emerald-600 border border-emerald-200"
                               : "bg-red-50 text-red-600 border border-red-200"
-                          }`}>
-                            <span className={`w-1.5 h-1.5 rounded-full ${
-                              status === "approved" ? "bg-emerald-500" : "bg-red-500"
-                            }`} />
+                            }`}>
+                            <span className={`w-1.5 h-1.5 rounded-full ${status === "approved" ? "bg-emerald-500" : "bg-red-500"
+                              }`} />
                             {status.charAt(0).toUpperCase() + status.slice(1)}
                           </span>
                         )}
@@ -661,11 +659,10 @@ const Hotels = () => {
                         onClick={() => handleEdit(hotel)}
                         disabled={hotel.status === "approved"}
                         title={hotel.status === "approved" ? "Cannot edit approved hotel" : "Edit Hotel"}
-                        className={`inline-flex items-center justify-center w-9 h-9 rounded-lg transition-all duration-200 border hover:shadow-sm ${
-                          hotel.status === "approved"
+                        className={`inline-flex items-center justify-center w-9 h-9 rounded-lg transition-all duration-200 border hover:shadow-sm ${hotel.status === "approved"
                             ? "bg-gray-50 text-gray-300 border-gray-100 cursor-not-allowed"
                             : "bg-blue-50 text-blue-600 hover:bg-blue-100 hover:text-blue-700 border-blue-100 hover:border-blue-200"
-                        }`}
+                          }`}
                       >
                         <svg className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
                           <path strokeLinecap="round" strokeLinejoin="round" d="M16.862 4.487l1.687-1.688a1.875 1.875 0 112.652 2.652L10.582 16.07a4.5 4.5 0 01-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 011.13-1.897l8.932-8.931zm0 0L19.5 7.125M18 14v4.75A2.25 2.25 0 0115.75 21H5.25A2.25 2.25 0 013 18.75V8.25A2.25 2.25 0 015.25 6H10" />

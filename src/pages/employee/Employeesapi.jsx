@@ -61,15 +61,15 @@ const Employees = () => {
 
   const employees = useMemo(() => {
     // Log to debug
-    console.log("isSuperAdmin:", isSuperAdmin, "isAdmin:", isAdmin, "data:", data);
-    
+    // console.log("isSuperAdmin:", isSuperAdmin, "isAdmin:", isAdmin, "data:", data);
+
     if (!data) return [];
-    
+
     // Handle both response structures
-    const staffData = Array.isArray(data?.data) 
-      ? data.data 
-      : Array.isArray(data?.staff) 
-        ? data.staff 
+    const staffData = Array.isArray(data?.data)
+      ? data.data
+      : Array.isArray(data?.staff)
+        ? data.staff
         : [];
 
     if (!Array.isArray(staffData)) return [];

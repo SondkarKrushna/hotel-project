@@ -85,7 +85,7 @@ const Subscriptions = () => {
                 name: form.name,
                 planType: form.planType,
                 description: form.description,
-                price: form.planType === "trial" ? 0 : Number(form.price), // ✅ force
+                price: form.planType === "trial" ? 0 : Number(form.price),
                 billingCycle: form.billingCycle,
                 trialDays: form.trialDays,
             };

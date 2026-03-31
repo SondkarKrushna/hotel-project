@@ -10,6 +10,7 @@ import {
 } from "../../store/Api/employeeApi";
 import { toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
+import { ScaleLoader } from "react-spinners";
 
 const Employees = () => {
   const [errors, setErrors] = useState({});
@@ -28,7 +29,7 @@ const Employees = () => {
   const hotelId = useMemo(() => {
     const user = JSON.parse(localStorage.getItem("adminUser"));
     const hotel = user?.hotel || user?.hotel || localStorage.getItem("hotelId");
-    console.log("hotelId from localStorage:", hotel);
+    // console.log("hotelId from localStorage:", hotel);
     return hotel;
   }, []);
   const isAdmin = userRole === "HOTEL_ADMIN";
@@ -36,6 +37,10 @@ const Employees = () => {
 
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editEmployee, setEditEmployee] = useState(null);
+  const [deleteModalOpen, setDeleteModalOpen] = useState(false);
+  const [deleteId, setDeleteId] = useState(null);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isDeleting, setIsDeleting] = useState(false);
 
   const [formData, setFormData] = useState({
     username: "",
@@ -69,7 +74,7 @@ const Employees = () => {
 
   const employees = useMemo(() => {
     // Log to debug
-    console.log("isSuperAdmin:", isSuperAdmin, "isAdmin:", isAdmin, "data:", data);
+    // console.log("isSuperAdmin:", isSuperAdmin, "isAdmin:", isAdmin, "data:", data);
 
     if (!data) return [];
 
@@ -139,19 +144,23 @@ const Employees = () => {
     setIsModalOpen(true);
   };
 
-  // ✅ Delete
-  const handleDelete = async (id, name) => {
-    const confirmDelete = window.confirm(
-      `Are you sure you want to delete this employee`
-    );
+  // ✅ Delete (opens modal)
+  const handleDeleteClick = (id) => {
+    setDeleteId(id);
+    setDeleteModalOpen(true);
+  };
 
-    if (!confirmDelete) return;
-
+  const confirmDeleteAction = async () => {
     try {
-      await deleteEmployee(id).unwrap();
+      setIsDeleting(true);
+      await deleteEmployee(deleteId).unwrap();
       toast.success("Employee deleted successfully");
     } catch (error) {
       toast.error(error?.data?.message || "Delete failed");
+    } finally {
+      setIsDeleting(false);
+      setDeleteModalOpen(false);
+      setDeleteId(null);
     }
   };
 
@@ -204,6 +213,7 @@ const Employees = () => {
     if (!isValid) return;
 
     try {
+      setIsSubmitting(true);
       if (!editEmployee) {
         await createEmployee({
           username: formData.username,
@@ -233,6 +243,8 @@ const Employees = () => {
       setEditEmployee(null);
     } catch (error) {
       toast.error(error?.data?.message || "Something went wrong");
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
@@ -276,7 +288,7 @@ const Employees = () => {
               </button>
 
               <button
-                onClick={() => handleDelete(row._id, row.fullName)}
+                onClick={() => handleDeleteClick(row._id)}
                 className="px-3 py-1 bg-red-500 text-white rounded text-xs"
               >
                 Delete
@@ -511,11 +523,54 @@ const Employees = () => {
               {/* Submit Button */}
               <button
                 type="submit"
-                className="w-full py-2 bg-indigo-600 hover:bg-indigo-700 transition text-white rounded font-medium"
+                disabled={isSubmitting}
+                className="w-full py-2 bg-indigo-600 hover:bg-indigo-700 transition text-white rounded font-medium flex items-center justify-center disabled:opacity-60"
               >
-                {editEmployee ? "Update Staff" : "Add Staff"}
+                {isSubmitting ? (
+                  <ScaleLoader color="#fff" height={16} width={3} />
+                ) : editEmployee ? "Update Staff" : "Add Staff"}
               </button>
             </form>
+          </div>
+        </div>
+      )}
+
+      {/* Delete Confirmation Modal */}
+      {deleteModalOpen && (
+        <div
+          className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50 px-4"
+          onClick={() => { setDeleteModalOpen(false); setDeleteId(null); }}
+        >
+          <div
+            onClick={(e) => e.stopPropagation()}
+            className="bg-white w-full max-w-sm rounded-2xl shadow-2xl p-6 relative"
+          >
+            <div className="flex flex-col items-center text-center">
+              <div className="w-14 h-14 rounded-full bg-red-100 flex items-center justify-center mb-4">
+                <svg className="w-7 h-7 text-red-600" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M12 9v3.75m-9.303 3.376c-.866 1.5.217 3.374 1.948 3.374h14.71c1.73 0 2.813-1.874 1.948-3.374L13.949 3.378c-.866-1.5-3.032-1.5-3.898 0L2.697 16.126zM12 15.75h.007v.008H12v-.008z" />
+                </svg>
+              </div>
+              <h3 className="text-lg font-bold text-gray-900 mb-2">Confirm Delete</h3>
+              <p className="text-sm text-gray-500 mb-6">Are you sure you want to delete this staff member? This action cannot be undone.</p>
+              <div className="flex gap-3 w-full">
+                <button
+                  onClick={() => { setDeleteModalOpen(false); setDeleteId(null); }}
+                  className="flex-1 px-4 py-2 bg-gray-200 hover:bg-gray-300 rounded-lg font-medium transition-colors"
+                >
+                  Cancel
+                </button>
+                <button
+                  onClick={confirmDeleteAction}
+                  disabled={isDeleting}
+                  className="flex-1 px-4 py-2 bg-red-600 hover:bg-red-700 text-white rounded-lg font-medium transition-colors flex items-center justify-center disabled:opacity-60"
+                >
+                  {isDeleting ? (
+                    <ScaleLoader color="#fff" height={16} width={3} />
+                  ) : "Delete"}
+                </button>
+              </div>
+            </div>
           </div>
         </div>
       )}
