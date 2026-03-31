@@ -20,9 +20,9 @@ const Header = ({ onMenuClick }) => {
       <div className="flex items-center gap-3">
         <button
           onClick={onMenuClick}
-          className="lg:hidden text-gray-600 hover:text-gray-900"
+          className="lg:hidden text-gray-600 hover:text-[#0B1F3A] hover:bg-gray-100 transition-all p-1.5 rounded-lg"
         >
-          <Menu size={24} />
+          <Menu size={24} className="hover:scale-110 transition-transform" />
         </button>
 
         <h1

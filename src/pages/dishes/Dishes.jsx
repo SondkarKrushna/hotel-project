@@ -347,30 +347,24 @@ const Dishes = () => {
             />
 
             {/* Pagination */}
-            {totalPages > 1 && (
-                <div className="flex flex-wrap justify-center md:justify-end gap-2 md:gap-3 mt-6">
+            {!isLoading && totalPages > 1 && (
+                <div className="flex flex-wrap justify-center gap-2 md:gap-3 mt-6">
                     <button
-                        onClick={() =>
-                            setCurrentPage((prev) => Math.max(prev - 1, 1))
-                        }
+                        onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
                         disabled={currentPage === 1}
-                        className="px-3 md:px-4 py-2 bg-gray-200 rounded disabled:opacity-50 text-sm md:text-base"
+                        className="px-3 md:px-4 py-2 bg-gray-200 rounded-lg disabled:opacity-50 text-sm md:text-base transition-colors hover:bg-gray-300 font-medium"
                     >
                         Previous
                     </button>
 
-                    <span className="px-3 md:px-4 py-2 text-sm md:text-base">
+                    <span className="px-3 md:px-4 py-2 text-sm md:text-base font-medium text-gray-700">
                         Page {currentPage} of {totalPages || 1}
                     </span>
 
                     <button
-                        onClick={() =>
-                            setCurrentPage((prev) =>
-                                Math.min(prev + 1, totalPages)
-                            )
-                        }
+                        onClick={() => setCurrentPage((prev) => Math.min(prev + 1, totalPages))}
                         disabled={currentPage === totalPages}
-                        className="px-3 md:px-4 py-2 bg-gray-200 rounded disabled:opacity-50 text-sm md:text-base"
+                        className="px-3 md:px-4 py-2 bg-gray-200 rounded-lg disabled:opacity-50 text-sm md:text-base transition-colors hover:bg-gray-300 font-medium"
                     >
                         Next
                     </button>

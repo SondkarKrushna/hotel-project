@@ -5,7 +5,7 @@ const Table = ({ columns = [], data = [], loading }) => {
     <>
       {/* ================= DESKTOP VIEW ================= */}
       <div className="hidden md:block overflow-x-auto bg-gray-50 border border-gray-200 rounded-xl">
-        <table className="min-w-full text-sm">
+        <table className="min-w-full text-sm table-fixed">
           <thead className="bg-[#0d1827] border-b border-gray-200">
             <tr>
               {columns.map((col, i) => (

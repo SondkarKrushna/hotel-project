@@ -5,7 +5,7 @@ import Table from "../../components/tables/Table";
 const Users = () => {
   const [search, setSearch] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
-  const limit = 5;
+  const limit = 10;
 
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editUser, setEditUser] = useState(null);
@@ -239,27 +239,29 @@ const Users = () => {
       </div>
 
       {/* Pagination */}
-      <div className="flex justify-center gap-2 mt-6">
-        <button
-          onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
-          disabled={currentPage === 1}
-          className="px-4 py-2 bg-gray-200 rounded disabled:opacity-50"
-        >
-          Previous
-        </button>
+      {totalPages > 1 && (
+        <div className="flex flex-wrap justify-center gap-2 md:gap-3 mt-6">
+          <button
+            onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
+            disabled={currentPage === 1}
+            className="px-3 md:px-4 py-2 bg-gray-200 rounded-lg disabled:opacity-50 text-sm md:text-base transition-colors hover:bg-gray-300 font-medium"
+          >
+            Previous
+          </button>
 
-        <span className="px-4 py-2">
-          Page {currentPage} of {totalPages || 1}
-        </span>
+          <span className="px-3 md:px-4 py-2 text-sm md:text-base font-medium text-gray-700">
+            Page {currentPage} of {totalPages || 1}
+          </span>
 
-        <button
-          onClick={() => setCurrentPage((prev) => Math.min(prev + 1, totalPages))}
-          disabled={currentPage === totalPages}
-          className="px-4 py-2 bg-gray-200 rounded disabled:opacity-50"
-        >
-          Next
-        </button>
-      </div>
+          <button
+            onClick={() => setCurrentPage((prev) => Math.min(prev + 1, totalPages))}
+            disabled={currentPage === totalPages}
+            className="px-3 md:px-4 py-2 bg-gray-200 rounded-lg disabled:opacity-50 text-sm md:text-base transition-colors hover:bg-gray-300 font-medium"
+          >
+            Next
+          </button>
+        </div>
+      )}
 
       {/* Add/Edit Modal */}
       {isModalOpen && (

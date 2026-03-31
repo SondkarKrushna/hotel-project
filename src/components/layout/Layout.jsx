@@ -9,7 +9,7 @@ const Layout = ({ children }) => {
   return (
     <div className="min-h-screen flex bg-gray-50 relative">
       {/* Sidebar */}
-      <div className="fixed lg:static z-40">
+      <div className="fixed lg:sticky lg:top-0 lg:h-screen z-40">
         <Sidebar isOpen={isSidebarOpen} setIsOpen={setIsSidebarOpen} />
       </div>
 
