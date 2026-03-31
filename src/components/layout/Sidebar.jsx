@@ -49,41 +49,47 @@ const Sidebar = ({ isOpen, setIsOpen }) => {
   };
 
   const menuItems = [
-    {
-      name: "Orders",
-      icon: ShoppingCart,
-      link: "/myorders",
-    },
-    {
-      name: "Categories",
-      icon: FolderTree,
-      link: "/category",
-    },
-    {
-      name: "Dishes",
-      icon: UtensilsCrossed,
-      link: "/dishes",
-    },
-    ...(!isAdmin
-      ? [
+  {
+    name: "Orders",
+    icon: ShoppingCart,
+    link: "/myorders",
+  },
+  {
+    name: "Categories",
+    icon: FolderTree,
+    link: "/category",
+  },
+  {
+    name: "Dishes",
+    icon: UtensilsCrossed,
+    link: "/dishes",
+  },
+  ...(!isAdmin
+    ? [
         {
           name: "Hotels",
           icon: Hotel,
           link: "/allhotels",
         },
+      ]
+    : []),
+  {
+    name: "Staff",
+    icon: UserCog,
+    link: "/staff",
+  },
+
+  // 👇 move subscriptions here
+  ...(!isAdmin
+    ? [
         {
           name: "Subscriptions",
           icon: Layers,
           link: "/subscriptions",
         },
       ]
-      : []),
-    {
-      name: "Staff",
-      icon: UserCog,
-      link: "/staff",
-    },
-  ];
+    : []),
+];
 
   return (
     <>
