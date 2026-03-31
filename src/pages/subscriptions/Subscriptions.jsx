@@ -202,7 +202,7 @@ const Subscriptions = () => {
                                 {plan.name}
                             </h3>
 
-                            <label className="inline-flex items-center cursor-pointer">
+                            {/* <label className="inline-flex items-center cursor-pointer">
                                 <span className="text-xs mr-3">
                                     {plan.isActive ? "Active" : "Inactive"}
                                 </span>
@@ -217,7 +217,7 @@ const Subscriptions = () => {
                                 <div className="w-11 h-6 bg-gray-300 rounded-full peer peer-checked:bg-green-500 relative transition">
                                     <div className="absolute left-1 top-1 w-4 h-4 bg-white rounded-full transition peer-checked:translate-x-5"></div>
                                 </div>
-                            </label>
+                            </label> */}
                         </div>
 
                         {/* Price */}
@@ -237,7 +237,7 @@ const Subscriptions = () => {
                             <li>• {plan.description}</li>
                         </ul>
 
-                        {/* Action Buttons */}
+                        {/* Action Buttons
                         <div className="flex justify-between">
                             <button className="text-blue-600 text-sm">
                                 Edit
@@ -245,7 +245,7 @@ const Subscriptions = () => {
                             <button className="text-red-500 text-sm">
                                 Delete
                             </button>
-                        </div>
+                        </div> */}
                     </div>
                 ))}
             </div>

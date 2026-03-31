@@ -41,18 +41,18 @@ export const categoryApi = createApi({
 
     // ✅ FIXED UPDATE
     updateCategory: builder.mutation({
-  query: ({ id, ...body }) => ({
-    url: `/api/category/${id}`, // ✅ FIXED
-    method: "PUT",
-    body,
-  }),
-  invalidatesTags: ["Category"],
-}),
+      query: ({ id, ...body }) => ({
+        url: `/api/category/update/${id}`, // ✅ FIXED
+        method: "PUT",
+        body,
+      }),
+      invalidatesTags: ["Category"],
+    }),
 
     // ✅ DELETE
     deleteCategory: builder.mutation({
       query: (id) => ({
-        url: `/api/category/${id}`,
+        url: `/api/category/delete/${id}`,
         method: "DELETE",
       }),
       invalidatesTags: ["Category"],

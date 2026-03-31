@@ -10,6 +10,7 @@ import {
 } from "../../store/Api/dishApi";
 import { useGetCategoriesQuery } from "../../store/Api/categoryApi";
 import { toast } from "react-toastify";
+import { ScaleLoader } from "react-spinners";
 
 const Dishes = () => {
     const [errors, setErrors] = useState({});
@@ -21,6 +22,9 @@ const Dishes = () => {
     const [bulkCategory, setBulkCategory] = useState("");
     const [bulkFile, setBulkFile] = useState(null);
     const [bulkErrors, setBulkErrors] = useState({});
+    const [isSubmitting, setIsSubmitting] = useState(false);
+    const [showDeleteModal, setShowDeleteModal] = useState(false);
+    const [deleteId, setDeleteId] = useState(null);
 
     const [bulkUploadDish, { isLoading: bulkLoading }] =
         useBulkUploadDishMutation();
@@ -100,22 +104,15 @@ const Dishes = () => {
         const type = formData.get("type");
         const isAvailable = formData.get("isAvailable");
         const category = formData.get("category");
-        console.log("form data-===", category)
 
         let newErrors = {};
 
         if (!name) newErrors.name = "Dish name is required";
-
-        if (!price) {
-            newErrors.price = "Price is required";
-        } else if (Number(price) <= 0) {
-            newErrors.price = "Price must be greater than 0";
-        }
-
+        if (!price) newErrors.price = "Price is required";
+        else if (Number(price) <= 0) newErrors.price = "Price must be greater than 0";
         if (!category) newErrors.category = "Category is required";
 
         setErrors(newErrors);
-
         if (Object.keys(newErrors).length !== 0) return;
 
         const payload = {
@@ -123,41 +120,78 @@ const Dishes = () => {
             price: Number(price),
             type,
             isAvailable: isAvailable === "true",
-            category: category,
+            category,
         };
 
+        const toastId = toast.loading(
+            selectedDish ? "Updating dish..." : "Creating dish..."
+        );
+
         try {
+            setIsSubmitting(true);
+
             if (selectedDish) {
                 await updateDish({ id: selectedDish._id || selectedDish.id, ...payload }).unwrap();
-                toast.success("Dish updated successfully ✅");
+
+                toast.update(toastId, {
+                    render: "Dish updated successfully ✅",
+                    type: "success",
+                    isLoading: false,
+                    autoClose: 2000,
+                });
             } else {
                 await createDish(payload).unwrap();
-                toast.success("Dish added successfully ✅");
+
+                toast.update(toastId, {
+                    render: "Dish added successfully ✅",
+                    type: "success",
+                    isLoading: false,
+                    autoClose: 2000,
+                });
             }
 
             setOpenModal(false);
             setSelectedDish(null);
             setErrors({});
         } catch (error) {
-            toast.error(error?.data?.message || "Something went wrong ❌");
+            toast.update(toastId, {
+                render: error?.data?.message || "Something went wrong ❌",
+                type: "error",
+                isLoading: false,
+                autoClose: 2000,
+            });
+
             setErrors({
                 apiError: error?.data?.message || "Something went wrong",
             });
+        } finally {
+            setIsSubmitting(false);
         }
     };
 
-    const handleDelete = async (id) => {
-        const confirmDelete = window.confirm(
-            "Are you sure you want to delete this dish?"
-        );
-
-        if (!confirmDelete) return;
+    const handleDelete = async () => {
+        const toastId = toast.loading("Deleting dish...");
 
         try {
-            await deleteDish(id).unwrap();
-            toast.success("Dish deleted successfully 🗑️");
+            await deleteDish(deleteId).unwrap();
+
+            toast.update(toastId, {
+                render: "Dish deleted successfully 🗑️",
+                type: "success",
+                isLoading: false,
+                autoClose: 2000,
+            });
+
         } catch (error) {
-            toast.error(error?.data?.message || "Delete failed ❌");
+            toast.update(toastId, {
+                render: error?.data?.message || "Delete failed ❌",
+                type: "error",
+                isLoading: false,
+                autoClose: 2000,
+            });
+        } finally {
+            setShowDeleteModal(false);
+            setDeleteId(null);
         }
     };
     const handleBulkUpload = async (e) => {
@@ -253,7 +287,10 @@ const Dishes = () => {
                                 Edit
                             </button>
                             <button
-                                onClick={() => handleDelete(row._id)}
+                                onClick={() => {
+                                    setDeleteId(row._id);
+                                    setShowDeleteModal(true);
+                                }}
                                 className="px-3 py-1 bg-red-500 text-white rounded text-xs"
                             >
                                 Delete
@@ -454,9 +491,16 @@ const Dishes = () => {
 
                                 <button
                                     type="submit"
-                                    className="px-4 py-2 bg-indigo-600 text-white rounded text-sm"
+                                    disabled={isSubmitting}
+                                    className="px-4 py-2 bg-indigo-600 text-white rounded text-sm flex justify-center items-center disabled:opacity-60"
                                 >
-                                    {selectedDish ? "Update" : "Create"}
+                                    {isSubmitting ? (
+                                        <ScaleLoader color="#fff" height={12} width={3} />
+                                    ) : selectedDish ? (
+                                        "Update"
+                                    ) : (
+                                        "Create"
+                                    )}
                                 </button>
                             </div>
                         </form>
@@ -537,12 +581,46 @@ const Dishes = () => {
                                 <button
                                     type="submit"
                                     disabled={bulkLoading}
-                                    className="px-4 py-2 bg-green-600 text-white rounded"
+                                    className="px-4 py-2 bg-green-600 text-white rounded flex justify-center items-center disabled:opacity-60"
                                 >
-                                    {bulkLoading ? "Uploading..." : "Upload"}
+                                    {bulkLoading ? (
+                                        <ScaleLoader color="#fff" height={12} width={3} />
+                                    ) : (
+                                        "Upload"
+                                    )}
                                 </button>
                             </div>
                         </form>
+                    </div>
+                </div>
+            )}
+            {showDeleteModal && (
+                <div className="fixed inset-0 flex items-center justify-center z-50">
+                    <div className="bg-white rounded-xl shadow-lg p-6 w-[90%] max-w-md">
+
+                        <h3 className="text-lg font-bold text-gray-800 mb-3">
+                            Confirm Delete
+                        </h3>
+
+                        <p className="text-sm text-gray-600 mb-5">
+                            Are you sure you want to delete this dish? This action cannot be undone.
+                        </p>
+
+                        <div className="flex justify-end gap-3">
+                            <button
+                                onClick={() => setShowDeleteModal(false)}
+                                className="px-4 py-2 bg-gray-200 rounded"
+                            >
+                                Cancel
+                            </button>
+
+                            <button
+                                onClick={handleDelete}
+                                className="px-4 py-2 bg-red-600 text-white rounded"
+                            >
+                                Delete
+                            </button>
+                        </div>
                     </div>
                 </div>
             )}

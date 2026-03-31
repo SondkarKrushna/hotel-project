@@ -20,6 +20,8 @@ const Profile = () => {
   const [verifyPayment] = useVerifyPaymentMutation();
   const { data: plansData } = useGetAllSubscriptionsQuery();
   const [selectedPlanId, setSelectedPlanId] = useState("");
+  const [isLoggingOut, setIsLoggingOut] = useState(false);
+  const [showLogoutModal, setShowLogoutModal] = useState(false);
 
   useEffect(() => {
     const storedUser = localStorage.getItem("adminUser");
@@ -28,16 +30,37 @@ const Profile = () => {
     }
   }, []);
 
-  const handleLogout = () => {
-    const confirmLogout = window.confirm(
-      "Are you sure you want to logout?"
-    );
+  
 
-    if (!confirmLogout) return;
+  const handleLogout = () => {
+  setShowLogoutModal(true);
+};
+
+const confirmLogout = async () => {
+  try {
+    setIsLoggingOut(true);
+
+    await new Promise((res) => setTimeout(res, 800));
 
     dispatch(logout());
-    navigate("/", { replace: true });
-  };
+
+    toast.success("Logged out successfully!");
+
+    setTimeout(() => {
+      navigate("/", { replace: true });
+    }, 1200);
+
+  } catch (error) {
+    toast.error("Logout failed. Try again.");
+  } finally {
+    setIsLoggingOut(false);
+    setShowLogoutModal(false);
+  }
+};
+
+const cancelLogout = () => {
+  setShowLogoutModal(false);
+};
 
   const displayUser = profileData?.user || adminUser;
   const subscription = profileData?.subscription;
@@ -275,17 +298,59 @@ const Profile = () => {
 
   {/* Logout (always visible) */}
   <button
-    onClick={handleLogout}
-    className="mt-2 w-full flex items-center justify-center gap-2 px-6 py-3 border-2 border-red-500 hover:bg-red-50 text-red-600 font-semibold rounded-xl transition"
-  >
-    <LogOut size={20} />
-    Logout
-  </button>
+  onClick={handleLogout}
+  disabled={isLoggingOut}
+  className="mt-2 w-full flex items-center justify-center gap-2 px-6 py-3 border-2 border-red-500 hover:bg-red-50 text-red-600 font-semibold rounded-xl transition disabled:opacity-70"
+>
+  {isLoggingOut ? (
+    <ScaleLoader color="#ef4444" height={15} width={3} radius={2} margin={2} />
+  ) : (
+    <>
+      <LogOut size={20} />
+      Logout
+    </>
+  )}
+</button>
 
 </div>
           </div>
         </div>
       </div>
+      {showLogoutModal && (
+  <div className="fixed inset-0 flex items-center justify-center bg-white/20 z-50">
+    <div className="bg-white rounded-xl shadow-lg p-6 w-[90%] max-w-md">
+      
+      <h3 className="text-lg font-bold text-gray-800 mb-3">
+        Confirm Logout
+      </h3>
+
+      <p className="text-sm text-gray-600 mb-5">
+        Are you sure you want to logout?
+      </p>
+
+      <div className="flex justify-end gap-3">
+        <button
+          onClick={cancelLogout}
+          className="px-4 py-2 rounded-lg border text-gray-600 hover:bg-gray-100"
+        >
+          Cancel
+        </button>
+
+        <button
+          onClick={confirmLogout}
+          className="px-4 py-2 rounded-lg bg-red-500 text-white hover:bg-red-600"
+        >
+          {isLoggingOut ? (
+            <ScaleLoader color="#fff" height={12} width={3} />
+          ) : (
+            "Logout"
+          )}
+        </button>
+      </div>
+
+    </div>
+  </div>
+)}
     </Layout>
   );
 };

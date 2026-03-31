@@ -1,6 +1,8 @@
 import { useState, useMemo } from "react";
 import Layout from "../components/layout/Layout";
 import Table from "../components/tables/Table";
+import { toast } from "react-toastify";
+import { ScaleLoader } from "react-spinners";
 import {
   useGetCategoriesQuery,
   useCreateCategoryMutation,
@@ -13,27 +15,30 @@ const Categories = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const [selectedCategory, setSelectedCategory] = useState(null);
   const [openModal, setOpenModal] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [deleteModalOpen, setDeleteModalOpen] = useState(false);
+  const [deleteId, setDeleteId] = useState(null);
 
   const limit = 10;
-  
-    const user = useMemo(() => {
-  return JSON.parse(localStorage.getItem("adminUser"));
-}, []);
-// console.log("user==",user)
 
-const userRole = user?.role;
-const hotelId = user?.hotel;
+  const user = useMemo(() => {
+    return JSON.parse(localStorage.getItem("adminUser"));
+  }, []);
+  // console.log("user==",user)
 
-const isSuperAdmin = userRole === "SUPER_ADMIN";
-const isHotelAdmin = userRole === "HOTEL_ADMIN";
-const isAdmin  = userRole === "HOTEL_ADMIN";
+  const userRole = user?.role;
+  const hotelId = user?.hotel;
+
+  const isSuperAdmin = userRole === "SUPER_ADMIN";
+  const isHotelAdmin = userRole === "HOTEL_ADMIN";
+  const isAdmin = userRole === "HOTEL_ADMIN";
 
   const { data, isLoading, isError } = useGetCategoriesQuery({
-  role: userRole,
-  hotelId,
-  page: currentPage,
-  limit,
-});
+    role: userRole,
+    hotelId,
+    page: currentPage,
+    limit,
+  });
   const [createCategory] = useCreateCategoryMutation();
   const [updateCategory] = useUpdateCategoryMutation();
   const [deleteCategory] = useDeleteCategoryMutation();
@@ -60,30 +65,50 @@ const isAdmin  = userRole === "HOTEL_ADMIN";
 
   // 🔹 Add / Update
   const handleSubmit = async (e) => {
-  e.preventDefault();
+    e.preventDefault();
 
-  const formData = new FormData(e.target);
+    const formData = new FormData(e.target);
 
-  const payload = {
-    name: formData.get("name"),
+    const payload = {
+      name: formData.get("name"),
+    };
+
+    try {
+      setIsSubmitting(true);
+
+      if (selectedCategory) {
+        await updateCategory({
+          id: selectedCategory._id,
+          ...payload,
+        }).unwrap();
+
+        toast.success("Category updated successfully!");
+      } else {
+        await createCategory(payload).unwrap();
+
+        toast.success("Category created successfully!");
+      }
+
+      setOpenModal(false);
+      setSelectedCategory(null);
+
+    } catch (error) {
+      toast.error(error?.data?.message || "Operation failed");
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
-  if (selectedCategory) {
-    await updateCategory({
-      id: selectedCategory._id, // ✅ FIXED
-      ...payload,
-    });
-  } else {
-    await createCategory(payload);
-  }
+  const handleDelete = async () => {
+    try {
+      await deleteCategory(deleteId).unwrap();
 
-  setOpenModal(false);
-  setSelectedCategory(null);
-};
+      toast.success("Category deleted successfully!");
+      setDeleteModalOpen(false);
+      setDeleteId(null);
 
-  const handleDelete = async (id) => {
-    if (window.confirm("Delete this category?")) {
-      await deleteCategory(id);
+    } catch (error) {
+      toast.error(error?.data?.message || "Delete failed");
     }
   };
 
@@ -97,32 +122,35 @@ const isAdmin  = userRole === "HOTEL_ADMIN";
     },
 
     ...(isAdmin
-        ? [
-    {
-      label: "Actions",
-      render: (row) => (
-        <div className="flex gap-3">
-          <button
-            onClick={() => {
-              setSelectedCategory(row);
-              setOpenModal(true);
-            }}
-            className="px-3 py-1 bg-blue-500 text-white rounded text-xs"
-          >
-            Edit
-          </button>
+      ? [
+        {
+          label: "Actions",
+          render: (row) => (
+            <div className="flex gap-3">
+              <button
+                onClick={() => {
+                  setSelectedCategory(row);
+                  setOpenModal(true);
+                }}
+                className="px-3 py-1 bg-blue-500 text-white rounded text-xs"
+              >
+                Edit
+              </button>
 
-          <button
-            onClick={() => handleDelete(row._id)}
-            className="px-3 py-1 bg-red-500 text-white rounded text-xs"
-          >
-            Delete
-          </button>
-        </div>
-      ),
-    },
-    ]
-        : []),
+              <button
+                onClick={() => {
+                  setDeleteId(row._id);
+                  setDeleteModalOpen(true);
+                }}
+                className="px-3 py-1 bg-red-500 text-white rounded text-xs"
+              >
+                Delete
+              </button>
+            </div>
+          ),
+        },
+      ]
+      : []),
   ];
 
   if (isError) {
@@ -236,16 +264,59 @@ const isAdmin  = userRole === "HOTEL_ADMIN";
 
                 <button
                   type="submit"
-                  className="px-4 py-2 bg-indigo-600 text-white rounded"
+                  disabled={isSubmitting}
+                  className="px-4 py-2 bg-indigo-600 text-white rounded flex justify-center items-center disabled:opacity-60"
                 >
-                  {selectedCategory ? "Update" : "Create"}
+                  {isSubmitting ? (
+                    <ScaleLoader color="#fff" height={12} width={3} />
+                  ) : selectedCategory ? (
+                    "Update"
+                  ) : (
+                    "Create"
+                  )}
                 </button>
               </div>
             </form>
           </div>
         </div>
       )}
+      {deleteModalOpen && (
+        <div
+          className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4"
+          onClick={() => setDeleteModalOpen(false)}
+        >
+          <div
+            onClick={(e) => e.stopPropagation()}
+            className="bg-white p-6 rounded-xl w-full max-w-sm"
+          >
+            <h2 className="text-lg font-semibold mb-4 text-red-600">
+              Confirm Delete
+            </h2>
+
+            <p className="text-sm text-gray-600 mb-6">
+              Are you sure you want to delete this category?
+            </p>
+
+            <div className="flex justify-end gap-3">
+              <button
+                onClick={() => setDeleteModalOpen(false)}
+                className="px-4 py-2 bg-gray-200 rounded"
+              >
+                Cancel
+              </button>
+
+              <button
+                onClick={handleDelete}
+                className="px-4 py-2 bg-red-600 text-white rounded"
+              >
+                Delete
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </Layout>
+
   );
 };
 

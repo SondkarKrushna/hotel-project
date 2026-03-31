@@ -8,6 +8,7 @@ import { useLoginUserMutation } from "../store/Api/loginApi"
 import { useDispatch, useSelector } from "react-redux";
 import { setCredentials } from "../store/slice/authSlice";
 import { ScaleLoader } from "react-spinners";
+import { toast } from "react-toastify";
 
 const Login = () => {
     const [showPassword, setShowPassword] = useState(false);
@@ -45,16 +46,9 @@ const Login = () => {
 
         if (Object.keys(newErrors).length === 0) {
             try {
-                const response = await loginUser({
-                    phone,
-                    password,
-                }).unwrap();
+                const response = await loginUser({ phone, password }).unwrap();
 
-                // console.log("Login Success:", response);
-
-                // ✅ Ensure hotel data is properly stored
                 const userData = response.user;
-                // console.log("User data from login:", userData);
 
                 dispatch(
                     setCredentials({
@@ -63,24 +57,31 @@ const Login = () => {
                     })
                 );
 
-                // ✅ Also store hotel ID in localStorage for backward compatibility
                 if (userData.hotel?._id) {
                     localStorage.setItem("hotelId", userData.hotel._id);
                 } else if (userData.hotel?.id) {
                     localStorage.setItem("hotelId", userData.hotel.id);
                 }
 
-                navigate("/dashboard");
+                toast.success("Login successful!");
+
+                setTimeout(() => {
+                    navigate("/dashboard");
+                }, 1000);
 
             } catch (error) {
                 console.error("Login Failed:", error);
 
+                const errorMessage =
+                    error?.data?.message || "Invalid credentials";
+
                 setErrors({
                     ...newErrors,
-                    apiError: error?.data?.message || "Invalid credentials",
+                    apiError: errorMessage,
                 });
-            }
 
+                toast.error(errorMessage);
+            }
         }
     };
 
