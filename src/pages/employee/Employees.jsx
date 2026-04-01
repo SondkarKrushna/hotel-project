@@ -179,9 +179,9 @@ const Employees = () => {
 
     if (!formData.phone.trim()) {
       newErrors.phone = "Phone is required";
-    } else if (!/^[0-9]{7,15}$/.test(formData.phone)) {
-      newErrors.phone = "Phone must be 7–15 digits";
-    }
+    } else if (!/^[0-9]{10}$/.test(formData.phone)) {
+  newErrors.phone = "Phone must be exactly 10 digits";
+}
     if (!formData.username.trim()) {
       newErrors.username = "Username is required";
     }
@@ -262,6 +262,7 @@ const Employees = () => {
     </button>
   ),
 },
+    { label: "Username", key: "username" },
     // { label: "Role", key: "role" },
     { label: "Email", key: "email" },
     { label: "Phone", key: "phone" },
@@ -373,7 +374,10 @@ const Employees = () => {
               ✕
             </button>
 
-            <h2 className="text-lg md:text-xl font-semibold mb-4">
+            <h2 className="text-lg md:text-xl font-semibold mb-4 flex items-center gap-2">
+              <span className="w-8 h-8 rounded-lg bg-indigo-100 flex items-center justify-center">
+                <svg className="w-4 h-4 text-indigo-600" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M15.75 6a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0zM4.501 20.118a7.5 7.5 0 0114.998 0A17.933 17.933 0 0112 21.75c-2.676 0-5.216-.584-7.499-1.632z" /></svg>
+              </span>
               {editEmployee ? "Edit Staff" : "Add Staff"}
             </h2>
 
@@ -381,9 +385,13 @@ const Employees = () => {
 
               {/* Full Name */}
               <div>
+                <label className="text-sm font-medium text-gray-700 mb-1 flex items-center gap-1.5">
+                  <svg className="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M15.75 6a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0zM4.501 20.118a7.5 7.5 0 0114.998 0A17.933 17.933 0 0112 21.75c-2.676 0-5.216-.584-7.499-1.632z" /></svg>
+                  Full Name
+                </label>
                 <input
                   type="text"
-                  placeholder="Full Name"
+                  placeholder="Enter full name"
                   value={formData.fullName}
                   onChange={(e) => {
                     setFormData({ ...formData, fullName: e.target.value });
@@ -400,9 +408,13 @@ const Employees = () => {
               </div>
               {/* Username */}
               <div>
+                <label className="text-sm font-medium text-gray-700 mb-1 flex items-center gap-1.5">
+                  <svg className="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M17.982 18.725A7.488 7.488 0 0012 15.75a7.488 7.488 0 00-5.982 2.975m11.963 0a9 9 0 10-11.963 0m11.963 0A8.966 8.966 0 0112 21a8.966 8.966 0 01-5.982-2.275M15 9.75a3 3 0 11-6 0 3 3 0 016 0z" /></svg>
+                  Username
+                </label>
                 <input
                   type="text"
-                  placeholder="Username"
+                  placeholder="Enter username"
                   value={formData.username}
                   onChange={(e) => {
                     setFormData({ ...formData, username: e.target.value });
@@ -420,9 +432,13 @@ const Employees = () => {
 
               {/* Email */}
               <div>
+                <label className="text-sm font-medium text-gray-700 mb-1 flex items-center gap-1.5">
+                  <svg className="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M21.75 6.75v10.5a2.25 2.25 0 01-2.25 2.25h-15a2.25 2.25 0 01-2.25-2.25V6.75m19.5 0A2.25 2.25 0 0019.5 4.5h-15a2.25 2.25 0 00-2.25 2.25m19.5 0v.243a2.25 2.25 0 01-1.07 1.916l-7.5 4.615a2.25 2.25 0 01-2.36 0L3.32 8.91a2.25 2.25 0 01-1.07-1.916V6.75" /></svg>
+                  Email
+                </label>
                 <input
                   type="email"
-                  placeholder="Email"
+                  placeholder="Enter email address"
                   value={formData.email}
                   onChange={(e) => {
                     setFormData({ ...formData, email: e.target.value });
@@ -440,12 +456,18 @@ const Employees = () => {
 
               {/* Phone */}
               <div>
+                <label className="text-sm font-medium text-gray-700 mb-1 flex items-center gap-1.5">
+                  <svg className="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M2.25 6.75c0 8.284 6.716 15 15 15h2.25a2.25 2.25 0 002.25-2.25v-1.372c0-.516-.351-.966-.852-1.091l-4.423-1.106c-.44-.11-.902.055-1.173.417l-.97 1.293c-.282.376-.769.542-1.21.38a12.035 12.035 0 01-7.143-7.143c-.162-.441.004-.928.38-1.21l1.293-.97c.363-.271.527-.734.417-1.173L6.963 3.102a1.125 1.125 0 00-1.091-.852H4.5A2.25 2.25 0 002.25 4.5v2.25z" /></svg>
+                  Phone Number
+                </label>
                 <input
                   type="text"
-                  placeholder="Phone Number"
+                  placeholder="Enter 10-digit phone number"
+                  maxLength={10}
                   value={formData.phone}
                   onChange={(e) => {
-                    setFormData({ ...formData, phone: e.target.value });
+                    const val = e.target.value.replace(/\D/g, "");
+                    setFormData({ ...formData, phone: val });
                     setErrors({ ...errors, phone: "" });
                   }}
                   className={`w-full px-4 py-2 rounded border ${errors.phone ? "border-red-500" : "border-gray-200"
@@ -482,9 +504,13 @@ const Employees = () => {
               {!editEmployee && (
                 <>
                   <div>
+                    <label className="text-sm font-medium text-gray-700 mb-1 flex items-center gap-1.5">
+                      <svg className="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M16.5 10.5V6.75a4.5 4.5 0 10-9 0v3.75m-.75 11.25h10.5a2.25 2.25 0 002.25-2.25v-6.75a2.25 2.25 0 00-2.25-2.25H6.75a2.25 2.25 0 00-2.25 2.25v6.75a2.25 2.25 0 002.25 2.25z" /></svg>
+                      Password
+                    </label>
                     <input
                       type="password"
-                      placeholder="Password"
+                      placeholder="Enter password (min 6 characters)"
                       value={formData.password}
                       onChange={(e) => {
                         setFormData({ ...formData, password: e.target.value });
@@ -501,9 +527,13 @@ const Employees = () => {
                   </div>
 
                   <div>
+                    <label className="text-sm font-medium text-gray-700 mb-1 flex items-center gap-1.5">
+                      <svg className="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M9 12.75L11.25 15 15 9.75m-3-7.036A11.959 11.959 0 013.598 6 11.99 11.99 0 003 9.749c0 5.592 3.824 10.29 9 11.623 5.176-1.332 9-6.03 9-11.622 0-1.31-.21-2.571-.598-3.751h-.152c-3.196 0-6.1-1.248-8.25-3.285z" /></svg>
+                      Confirm Password
+                    </label>
                     <input
                       type="password"
-                      placeholder="Confirm Password"
+                      placeholder="Re-enter password"
                       value={formData.confirmPassword}
                       onChange={(e) => {
                         setFormData({ ...formData, confirmPassword: e.target.value });

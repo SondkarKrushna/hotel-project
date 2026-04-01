@@ -26,6 +26,15 @@ const Dishes = () => {
     const [showDeleteModal, setShowDeleteModal] = useState(false);
     const [deleteId, setDeleteId] = useState(null);
 
+    // Controlled dish form state
+    const [dishForm, setDishForm] = useState({
+        name: "",
+        price: "",
+        type: "veg",
+        isAvailable: "true",
+        category: "",
+    });
+
     const [bulkUploadDish, { isLoading: bulkLoading }] =
         useBulkUploadDishMutation();
 
@@ -98,12 +107,11 @@ const Dishes = () => {
     const handleSubmit = async (e) => {
         e.preventDefault();
 
-        const formData = new FormData(e.target);
-        const name = formData.get("name")?.trim();
-        const price = formData.get("price");
-        const type = formData.get("type");
-        const isAvailable = formData.get("isAvailable");
-        const category = formData.get("category");
+        const name = dishForm.name?.trim();
+        const price = dishForm.price;
+        const type = dishForm.type;
+        const isAvailable = dishForm.isAvailable;
+        const category = dishForm.category;
 
         let newErrors = {};
 
@@ -280,6 +288,14 @@ const Dishes = () => {
                             <button
                                 onClick={() => {
                                     setSelectedDish(row);
+                                    setDishForm({
+                                        name: row.name || "",
+                                        price: row.price?.toString() || "",
+                                        type: row.type || "veg",
+                                        isAvailable: row.isAvailable?.toString() || "true",
+                                        category: row.category?._id || "",
+                                    });
+                                    setErrors({});
                                     setOpenModal(true);
                                 }}
                                 className="px-3 py-1 bg-blue-500 text-white rounded text-xs"
@@ -321,6 +337,8 @@ const Dishes = () => {
                             <button
                                 onClick={() => {
                                     setSelectedDish(null);
+                                    setDishForm({ name: "", price: "", type: "veg", isAvailable: "true", category: "" });
+                                    setErrors({});
                                     setOpenModal(true);
                                 }}
                                 className="bg-indigo-600 text-white px-4 py-2 rounded text-sm"
@@ -379,100 +397,144 @@ const Dishes = () => {
                 >
                     <div
                         onClick={(e) => e.stopPropagation()}
-                        className="bg-white p-6 rounded-xl w-full max-w-md max-h-[90vh] overflow-y-auto"
+                        className="bg-white p-6 rounded-xl w-full max-w-md max-h-[90vh] overflow-y-auto shadow-2xl"
                     >
-                        <h2 className="text-lg font-semibold mb-4">
+                        <button
+                            onClick={() => setOpenModal(false)}
+                            className="absolute top-4 right-4 text-gray-400 hover:text-red-500 text-xl transition-colors"
+                        >
+                            ✕
+                        </button>
+
+                        <h2 className="text-lg font-semibold mb-4 flex items-center gap-2">
+                            <span className="w-8 h-8 rounded-lg bg-indigo-100 flex items-center justify-center">
+                                <svg className="w-4 h-4 text-indigo-600" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M12 6v12m-3-2.818l.879.659c1.171.879 3.07.879 4.242 0 1.172-.879 1.172-2.303 0-3.182C13.536 12.219 12.768 12 12 12c-.725 0-1.45-.22-2.003-.659-1.106-.879-1.106-2.303 0-3.182s2.9-.879 4.006 0l.415.33M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+                            </span>
                             {selectedDish ? "Edit Dish" : "Add Dish"}
                         </h2>
 
-                        <form onSubmit={handleSubmit} className="space-y-3">
+                        <form onSubmit={handleSubmit} className="space-y-4">
                             {errors.apiError && (
                                 <p className="text-red-500 text-sm text-center">
                                     {errors.apiError}
                                 </p>
                             )}
 
-                            <input
-                                name="name"
-                                defaultValue={selectedDish?.name}
-                                placeholder="Dish Name"
-                                className={`border w-full px-3 py-2 rounded ${errors.name
-                                    ? "border-red-500"
-                                    : "border-gray-300"
-                                    }`}
-                            />
-                            {errors.name && (
-                                <p className="text-red-500 text-sm">
-                                    {errors.name}
-                                </p>
-                            )}
+                            <div>
+                                <label className="text-sm font-medium text-gray-700 mb-1 flex items-center gap-1.5">
+                                    <svg className="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M16.862 4.487l1.687-1.688a1.875 1.875 0 112.652 2.652L10.582 16.07a4.5 4.5 0 01-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 011.13-1.897l8.932-8.931z" /></svg>
+                                    Dish Name
+                                </label>
+                                <input
+                                    type="text"
+                                    value={dishForm.name}
+                                    onChange={(e) => {
+                                        setDishForm({ ...dishForm, name: e.target.value });
+                                        setErrors({ ...errors, name: "" });
+                                    }}
+                                    placeholder="Enter dish name"
+                                    className={`border w-full px-3 py-2 rounded ${errors.name
+                                        ? "border-red-500"
+                                        : "border-gray-300"
+                                        }`}
+                                />
+                                {errors.name && (
+                                    <p className="text-red-500 text-sm mt-1">
+                                        {errors.name}
+                                    </p>
+                                )}
+                            </div>
 
-                            <input
-                                name="price"
-                                type="number"
-                                defaultValue={selectedDish?.price}
-                                placeholder="Price"
-                                className={`border w-full px-3 py-2 rounded ${errors.price
-                                    ? "border-red-500"
-                                    : "border-gray-300"
-                                    }`}
-                            />
-                            {errors.price && (
-                                <p className="text-red-500 text-sm">
-                                    {errors.price}
-                                </p>
-                            )}
+                            <div>
+                                <label className="text-sm font-medium text-gray-700 mb-1 flex items-center gap-1.5">
+                                    <svg className="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M12 6v12m-3-2.818l.879.659c1.171.879 3.07.879 4.242 0 1.172-.879 1.172-2.303 0-3.182C13.536 12.219 12.768 12 12 12c-.725 0-1.45-.22-2.003-.659-1.106-.879-1.106-2.303 0-3.182s2.9-.879 4.006 0l.415.33M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+                                    Price (₹)
+                                </label>
+                                <input
+                                    type="number"
+                                    value={dishForm.price}
+                                    onChange={(e) => {
+                                        setDishForm({ ...dishForm, price: e.target.value });
+                                        setErrors({ ...errors, price: "" });
+                                    }}
+                                    placeholder="Enter price"
+                                    className={`border w-full px-3 py-2 rounded ${errors.price
+                                        ? "border-red-500"
+                                        : "border-gray-300"
+                                        }`}
+                                />
+                                {errors.price && (
+                                    <p className="text-red-500 text-sm mt-1">
+                                        {errors.price}
+                                    </p>
+                                )}
+                            </div>
 
-                            <select
-                                name="type"
-                                defaultValue={selectedDish?.type || "veg"}
-                                className="border w-full px-3 py-2 rounded text-sm"
-                            >
-                                <option value="veg">Veg</option>
-                                <option value="non-veg">Non Veg</option>
-                            </select>
+                            <div>
+                                <label className="text-sm font-medium text-gray-700 mb-1 flex items-center gap-1.5">
+                                    <svg className="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M9.568 3H5.25A2.25 2.25 0 003 5.25v4.318c0 .597.237 1.17.659 1.591l9.581 9.581c.699.699 1.78.872 2.607.33a18.095 18.095 0 005.223-5.223c.542-.827.369-1.908-.33-2.607L11.16 3.66A2.25 2.25 0 009.568 3z" /><path strokeLinecap="round" strokeLinejoin="round" d="M6 6h.008v.008H6V6z" /></svg>
+                                    Type
+                                </label>
+                                <select
+                                    value={dishForm.type}
+                                    onChange={(e) => setDishForm({ ...dishForm, type: e.target.value })}
+                                    className="border w-full px-3 py-2 rounded text-sm border-gray-300"
+                                >
+                                    <option value="veg">Veg</option>
+                                    <option value="non-veg">Non Veg</option>
+                                </select>
+                            </div>
 
-                            <select
-                                name="isAvailable"
-                                defaultValue={
-                                    selectedDish?.isAvailable?.toString() ||
-                                    "true"
-                                }
-                                className="border w-full px-3 py-2 rounded text-sm"
-                            >
-                                <option value="true">Available</option>
-                                <option value="false">Not Available</option>
-                            </select>
+                            <div>
+                                <label className="text-sm font-medium text-gray-700 mb-1 flex items-center gap-1.5">
+                                    <svg className="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+                                    Availability
+                                </label>
+                                <select
+                                    value={dishForm.isAvailable}
+                                    onChange={(e) => setDishForm({ ...dishForm, isAvailable: e.target.value })}
+                                    className="border w-full px-3 py-2 rounded text-sm border-gray-300"
+                                >
+                                    <option value="true">Available</option>
+                                    <option value="false">Not Available</option>
+                                </select>
+                            </div>
 
-                            <select
-                                name="category"
-                                disabled={catLoading}
-                                defaultValue={
-                                    selectedDish?.category?._id || ""
-                                }
-                                className={`border w-full px-3 py-2 rounded text-sm ${errors.category
-                                    ? "border-red-500"
-                                    : "border-gray-300"
-                                    }`}
-                            >
-                                <option value="">
-                                    {catLoading
-                                        ? "Loading..."
-                                        : "Select Category"}
-                                </option>
-
-                                {categories.map((cat) => (
-                                    <option key={cat._id} value={cat._id}>
-                                        {cat.name}
+                            <div>
+                                <label className="text-sm font-medium text-gray-700 mb-1 flex items-center gap-1.5">
+                                    <svg className="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M3.75 6A2.25 2.25 0 016 3.75h2.25A2.25 2.25 0 0110.5 6v2.25a2.25 2.25 0 01-2.25 2.25H6a2.25 2.25 0 01-2.25-2.25V6zM3.75 15.75A2.25 2.25 0 016 13.5h2.25a2.25 2.25 0 012.25 2.25V18a2.25 2.25 0 01-2.25 2.25H6A2.25 2.25 0 013.75 18v-2.25zM13.5 6a2.25 2.25 0 012.25-2.25H18A2.25 2.25 0 0120.25 6v2.25A2.25 2.25 0 0118 10.5h-2.25a2.25 2.25 0 01-2.25-2.25V6zM13.5 15.75a2.25 2.25 0 012.25-2.25H18a2.25 2.25 0 012.25 2.25V18A2.25 2.25 0 0118 20.25h-2.25A2.25 2.25 0 0113.5 18v-2.25z" /></svg>
+                                    Category
+                                </label>
+                                <select
+                                    disabled={catLoading}
+                                    value={dishForm.category}
+                                    onChange={(e) => {
+                                        setDishForm({ ...dishForm, category: e.target.value });
+                                        setErrors({ ...errors, category: "" });
+                                    }}
+                                    className={`border w-full px-3 py-2 rounded text-sm ${errors.category
+                                        ? "border-red-500"
+                                        : "border-gray-300"
+                                        }`}
+                                >
+                                    <option value="">
+                                        {catLoading
+                                            ? "Loading..."
+                                            : "Select Category"}
                                     </option>
-                                ))}
-                            </select>
 
-                            {errors.category && (
-                                <p className="text-red-500 text-sm">
-                                    {errors.category}
-                                </p>
-                            )}
+                                    {categories.map((cat) => (
+                                        <option key={cat._id} value={cat._id}>
+                                            {cat.name}
+                                        </option>
+                                    ))}
+                                </select>
+                                {errors.category && (
+                                    <p className="text-red-500 text-sm mt-1">
+                                        {errors.category}
+                                    </p>
+                                )}
+                            </div>
 
                             <div className="flex justify-end gap-3 pt-3">
                                 <button
@@ -510,7 +572,10 @@ const Dishes = () => {
                         onClick={(e) => e.stopPropagation()}
                         className="bg-white p-6 rounded-xl w-full max-w-md"
                     >
-                        <h2 className="text-lg font-semibold mb-4">
+                        <h2 className="text-lg font-semibold mb-4 flex items-center gap-2">
+                            <span className="w-8 h-8 rounded-lg bg-green-100 flex items-center justify-center">
+                                <svg className="w-4 h-4 text-green-600" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5m-13.5-9L12 3m0 0l4.5 4.5M12 3v13.5" /></svg>
+                            </span>
                             Bulk Upload Dishes
                         </h2>
 
@@ -518,13 +583,17 @@ const Dishes = () => {
 
                             {/* Category Select */}
                             <div>
+                                <label className="text-sm font-medium text-gray-700 mb-1 flex items-center gap-1.5">
+                                    <svg className="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M3.75 6A2.25 2.25 0 016 3.75h2.25A2.25 2.25 0 0110.5 6v2.25a2.25 2.25 0 01-2.25 2.25H6a2.25 2.25 0 01-2.25-2.25V6zM3.75 15.75A2.25 2.25 0 016 13.5h2.25a2.25 2.25 0 012.25 2.25V18a2.25 2.25 0 01-2.25 2.25H6A2.25 2.25 0 013.75 18v-2.25zM13.5 6a2.25 2.25 0 012.25-2.25H18A2.25 2.25 0 0120.25 6v2.25A2.25 2.25 0 0118 10.5h-2.25a2.25 2.25 0 01-2.25-2.25V6zM13.5 15.75a2.25 2.25 0 012.25-2.25H18a2.25 2.25 0 012.25 2.25V18A2.25 2.25 0 0118 20.25h-2.25A2.25 2.25 0 0113.5 18v-2.25z" /></svg>
+                                    Category
+                                </label>
                                 <select
                                     value={bulkCategory}
                                     onChange={(e) => {
                                         setBulkCategory(e.target.value);
                                         setBulkErrors((prev) => ({ ...prev, category: "" }));
                                     }}
-                                    className={`border w-full px-3 py-2 rounded ${bulkErrors.category ? "border-red-500" : ""
+                                    className={`border w-full px-3 py-2 rounded ${bulkErrors.category ? "border-red-500" : "border-gray-300"
                                         }`}
                                 >
                                     <option value="">Select Category</option>
@@ -544,6 +613,10 @@ const Dishes = () => {
 
                             {/* File Upload */}
                             <div>
+                                <label className="text-sm font-medium text-gray-700 mb-1 flex items-center gap-1.5">
+                                    <svg className="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M19.5 14.25v-2.625a3.375 3.375 0 00-3.375-3.375h-1.5A1.125 1.125 0 0113.5 7.125v-1.5a3.375 3.375 0 00-3.375-3.375H8.25m6.75 12l-3-3m0 0l-3 3m3-3v6m-1.5-15H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 00-9-9z" /></svg>
+                                    Upload File (.xlsx, .xls)
+                                </label>
                                 <input
                                     type="file"
                                     accept=".xlsx,.xls"
@@ -551,10 +624,16 @@ const Dishes = () => {
                                         setBulkFile(e.target.files[0]);
                                         setBulkErrors((prev) => ({ ...prev, file: "" }));
                                     }}
-                                    className={`border w-full px-3 py-2 rounded ${bulkErrors.file ? "border-red-500" : ""
+                                    className={`border w-full px-3 py-2 rounded ${bulkErrors.file ? "border-red-500" : "border-gray-300"
                                         }`}
                                     key={bulkFile ? bulkFile.name : "empty"}
                                 />
+
+                                {bulkFile && (
+                                    <p className="text-green-600 text-sm mt-1 flex items-center gap-1">
+                                        📄 {bulkFile.name}
+                                    </p>
+                                )}
 
                                 {bulkErrors.file && (
                                     <p className="text-red-500 text-sm mt-1">
