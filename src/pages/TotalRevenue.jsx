@@ -1,4 +1,3 @@
-import Layout from "../components/layout/Layout";
 import Table from "../components/tables/Table";
 import OrderStatCard from "../components/cards/OrderStatCard";
 import { ShoppingCart, IndianRupee } from "lucide-react";
@@ -42,7 +41,7 @@ const TotalRevenue = () => {
   }
 
   return (
-    <Layout>
+    <>
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
         {/* <OrderStatCard
           title="Total Orders"
@@ -80,7 +79,7 @@ const TotalRevenue = () => {
         data={orders}
         loading={isLoading}
       />
-    </Layout>
+    </>
   );
 };
 

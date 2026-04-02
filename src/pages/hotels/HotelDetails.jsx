@@ -1,5 +1,4 @@
-import Layout from "../../components/layout/Layout";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
 import Table from "../../components/tables/Table"
 import Skeleton from "../../components/ui/Skeleton"
@@ -11,6 +10,8 @@ import {
     Utensils,
     ShoppingCart,
     DollarSign,
+    ChevronLeft,
+    ChevronRight,
 } from "lucide-react";
 
 import { useGetHotelByIdQuery } from "../../store/Api/hotelApi";
@@ -45,6 +46,11 @@ const HotelDetails = () => {
     const navigate = useNavigate();
     const { id } = useParams();
     const [activeTab, setActiveTab] = useState("staff");
+    const [page, setPage] = useState(1);
+
+    useEffect(() => {
+        setPage(1);
+    }, [activeTab]);
 
     const { data, isLoading, isError } = useGetHotelByIdQuery(id, {
         skip: !id,
@@ -52,7 +58,7 @@ const HotelDetails = () => {
 
     if (isLoading) {
         return (
-            <Layout>
+            <>
                 <div className="bg-[#F2F8FF] min-h-screen p-6">
                     <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
 
@@ -121,17 +127,17 @@ const HotelDetails = () => {
 
                     </div>
                 </div>
-            </Layout>
+            </>
         );
     }
 
     if (isError) {
         return (
-            <Layout>
+            <>
                 <div className="flex justify-center items-center min-h-screen text-red-500">
                     Failed to load hotel details
                 </div>
-            </Layout>
+            </>
         );
     }
 
@@ -141,6 +147,7 @@ const HotelDetails = () => {
     const summary = data?.data?.summary || {};
     const staff = data?.data?.data?.staff || [];
     const menus = data?.data?.data?.dishes || [];
+    const categories = data?.data?.data?.categories || [];
     const customers = data?.data?.data?.customers || [];
     const orders = data?.data?.data?.orders || [];
 
@@ -173,9 +180,29 @@ const HotelDetails = () => {
             key: "name",
         },
         {
+            label: "Category",
+            key: "category",
+            render: (row) => {
+                const category = categories.find((c) => c._id === row.category);
+                return category ? category.name : "N/A";
+            },
+        },
+        {
             label: "Price",
             key: "price",
             render: (row) => `₹ ${row.price}`,
+        },
+    ];
+
+    const categoryColumns = [
+        {
+            label: "Category Name",
+            key: "name",
+        },
+        {
+            label: "Dish Count",
+            key: "dishCount",
+            render: (row) => row.dishCount || 0,
         },
     ];
 
@@ -233,8 +260,38 @@ const HotelDetails = () => {
         },
     ];
 
+    const ITEMS_PER_PAGE = 10;
+    const getPaginatedData = (dataList) => {
+        const startIndex = (page - 1) * ITEMS_PER_PAGE;
+        return dataList.slice(startIndex, startIndex + ITEMS_PER_PAGE);
+    };
+
+    const renderPagination = (dataList) => {
+        if (dataList.length <= ITEMS_PER_PAGE) return null;
+        const totalPages = Math.ceil(dataList.length / ITEMS_PER_PAGE);
+        return (
+            <div className="flex justify-end items-center gap-3 mt-4 text-sm">
+                <button
+                    onClick={() => setPage(p => Math.max(1, p - 1))}
+                    disabled={page === 1}
+                    className="p-1.5 rounded-lg bg-[#F5FAFF] hover:bg-blue-100 text-[#24435d] border border-blue-200 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                >
+                    <ChevronLeft size={16} />
+                </button>
+                <span className="text-[#24435d] font-medium">Page {page} of {totalPages}</span>
+                <button
+                    onClick={() => setPage(p => Math.min(totalPages, p + 1))}
+                    disabled={page === totalPages}
+                    className="p-1.5 rounded-lg bg-[#F5FAFF] hover:bg-blue-100 text-[#24435d] border border-blue-200 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                >
+                    <ChevronRight size={16} />
+                </button>
+            </div>
+        );
+    };
+
     return (
-        <Layout>
+        <>
             <div className="bg-[#F2F8FF] min-h-screen p-6">
                 <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
 
@@ -309,13 +366,13 @@ const HotelDetails = () => {
 
                             {/* ================= TABS ================= */}
                             <div className="hidden md:flex gap-6 border-b pb-3 text-sm font-semibold">
-                                {["staff", "menus", "orders", "customers"].map(tab => (
+                                {["staff", "categories", "menus", "orders", "customers"].map(tab => (
                                     <button
                                         key={tab}
                                         onClick={() => setActiveTab(tab)}
                                         className={`pb-2 capitalize ${activeTab === tab
                                             ? "text-[#24435d] border-b-2 border-[#24435d]"
-                                            : "text-gray-500"
+                                            : "text-gray-500 hover:text-[#24435d] transition-colors"
                                             }`}
                                     >
                                         {tab}
@@ -323,18 +380,18 @@ const HotelDetails = () => {
                                 ))}
                             </div>
                             {/* ✅ Mobile Tabs (Theme Matching) */}
-                            <div className="md:hidden bg-[#F5FAFF] rounded-2xl p-5 mb-4 border border-gray-100"> 
-                                <div className="grid grid-cols-2 gap-y-5 text-center text-sm font-semibold">
-                                    {["staff", "menus", "orders", "customers"].map(tab => (
+                            <div className="md:hidden bg-[#F5FAFF] rounded-2xl p-3 mb-4 border border-gray-100 overflow-x-auto hide-scrollbar"> 
+                                <div className="flex gap-2 text-sm font-semibold min-w-max">
+                                    {["staff", "categories", "menus", "orders", "customers"].map(tab => (
                                         <button
                                             key={tab}
                                             onClick={() => setActiveTab(tab)}
-                                            className={`capitalize transition-all duration-200 py-2 rounded-lg
+                                            className={`capitalize transition-all duration-200 px-4 py-2 rounded-lg
                                                 ${activeTab === tab
                                                     ? "bg-[#24435d] text-white shadow-sm"
                                                     : "text-gray-600 hover:bg-blue-50 hover:text-[#24435d]"
                                                 }
-        `}
+                                            `}
                                         >
                                             {tab}
                                         </button>
@@ -347,20 +404,44 @@ const HotelDetails = () => {
 
                                 {/* Staff */}
                                 {activeTab === "staff" && (
-                                    <Table
-                                        columns={staffColumns}
-                                        data={staff}
-                                        loading={false}
-                                    />
+                                    <div className="w-full overflow-x-auto">
+                                        <Table
+                                            columns={staffColumns}
+                                            data={getPaginatedData(staff)}
+                                            loading={false}
+                                        />
+                                        {renderPagination(staff)}
+                                    </div>
+                                )}
+
+                                {/* Categories */}
+                                {activeTab === "categories" && (
+                                    <div className="w-full overflow-x-auto">
+                                        {categories.length === 0 ? (
+                                            <p className="text-gray-500 text-sm">No categories found</p>
+                                        ) : (
+                                            <>
+                                                <Table
+                                                    columns={categoryColumns}
+                                                    data={getPaginatedData(categories)}
+                                                    loading={false}
+                                                />
+                                                {renderPagination(categories)}
+                                            </>
+                                        )}
+                                    </div>
                                 )}
 
                                 {/* Menus */}
                                 {activeTab === "menus" && (
-                                    <Table
-                                        columns={menuColumns}
-                                        data={menus}
-                                        loading={false}
-                                    />
+                                    <div className="w-full overflow-x-auto">
+                                        <Table
+                                            columns={menuColumns}
+                                            data={getPaginatedData(menus)}
+                                            loading={false}
+                                        />
+                                        {renderPagination(menus)}
+                                    </div>
                                 )}
 
                                 {/* Orders (Dynamic count only for now) */}
@@ -402,9 +483,10 @@ const HotelDetails = () => {
                                         <div className="w-full overflow-x-auto">
                                             <Table
                                                 columns={orderColumns}
-                                                data={orders}
+                                                data={getPaginatedData(orders)}
                                                 loading={false}
                                             />
+                                            {renderPagination(orders)}
                                         </div>
 
                                     </div>
@@ -416,11 +498,14 @@ const HotelDetails = () => {
                                         {customers.length === 0 ? (
                                             <p className="text-gray-500 text-sm">No customers found</p>
                                         ) : (
-                                            <Table
-                                                columns={customerColumns}
-                                                data={customers}
-                                                loading={false}
-                                            />
+                                            <>
+                                                <Table
+                                                    columns={customerColumns}
+                                                    data={getPaginatedData(customers)}
+                                                    loading={false}
+                                                />
+                                                {renderPagination(customers)}
+                                            </>
                                         )}
                                     </div>
                                 )}
@@ -432,7 +517,7 @@ const HotelDetails = () => {
 
                 </div>
             </div>
-        </Layout>
+        </>
     );
 };
 

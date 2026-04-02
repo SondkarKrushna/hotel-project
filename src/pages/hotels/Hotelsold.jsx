@@ -1,5 +1,4 @@
 import { useState, useMemo, useEffect } from "react";
-import Layout from "../../components/layout/Layout";
 import Table from "../../components/tables/Table";
 import Skeleton from "../../components/ui/Skeleton";
 
@@ -202,14 +201,14 @@ const Hotels = () => {
 
   if (isError) {
     return (
-      <Layout>
+      <>
         <p className="text-red-500">Failed to load hotels</p>
-      </Layout>
+      </>
     );
   }
 
   return (
-    <Layout>
+    <>
       {/* Header + Search + Add Button */}
       <div className="mb-6 mt-6 flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4">
         {isLoading ? (
@@ -431,7 +430,7 @@ const Hotels = () => {
           </div>
         </div>
       )}
-    </Layout>
+    </>
   );
 };
 

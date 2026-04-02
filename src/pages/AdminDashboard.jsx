@@ -1,6 +1,5 @@
 import { useMemo } from "react";
 import { useNavigate } from "react-router-dom";
-import Layout from "../components/layout/Layout";
 import StatCard from "../components/cards/StatCard";
 import Table from "../components/tables/Table";
 import Skeleton from "../components/ui/Skeleton";
@@ -162,7 +161,7 @@ const Dashboard = () => {
   ];
 
   return (
-    <Layout>
+    <>
       {/* ================= STATS ================= */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
         {(isSuperAdmin ? superStats : hotelStats).map((item, i) =>
@@ -214,7 +213,7 @@ const Dashboard = () => {
           </div>
         </>
       )}
-    </Layout>
+    </>
   );
 };
 

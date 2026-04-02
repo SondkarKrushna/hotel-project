@@ -1,5 +1,4 @@
 import { useState } from "react";
-import Layout from "../../components/layout/Layout";
 import StatCard from "../../components/cards/StatCard";
 import { IndianRupee, Calendar, Layers } from "lucide-react";
 import { useGetAllSubscriptionsQuery, useAddplansMutation, useUpdatePlanStatusMutation } from "../../store/Api/subscriptionApi";
@@ -138,7 +137,7 @@ const Subscriptions = () => {
 
     if (isLoading) {
         return (
-            <Layout>
+            <>
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
                     {[1, 2, 3].map((i) => (
                         <div
@@ -161,13 +160,13 @@ const Subscriptions = () => {
                         </div>
                     ))}
                 </div>
-            </Layout>
+            </>
         );
     }
     if (isError) return <p className="p-5 text-red-500">Error loading plans</p>;
 
     return (
-        <Layout>
+        <>
             {/* ================= STATS ================= */}
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
                 {stats.map((item, i) => (
@@ -389,7 +388,7 @@ const Subscriptions = () => {
                     </div>
                 </div>
             )}
-        </Layout>
+        </>
     );
 };
 

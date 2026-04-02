@@ -6,7 +6,6 @@ import { logout } from "../store/slice/authSlice";
 import { useGetProfileQuery } from "../store/Api/profileApi";
 import { useRechargeSubscriptionMutation, useGetAllSubscriptionsQuery } from "../store/Api/subscriptionApi";
 import { useVerifyPaymentMutation } from "../store/Api/loginApi";
-import Layout from "../components/layout/Layout";
 import { toast } from "react-toastify";
 import { ScaleLoader } from "react-spinners";
 
@@ -162,7 +161,7 @@ const cancelLogout = () => {
 };
 
   return (
-    <Layout>
+    <>
       <div className="max-w-4xl mx-auto p-6 md:p-8">
         <h2 className="text-2xl font-bold mb-6 text-gray-800">My Profile</h2>
         
@@ -351,7 +350,7 @@ const cancelLogout = () => {
     </div>
   </div>
 )}
-    </Layout>
+    </>
   );
 };
 

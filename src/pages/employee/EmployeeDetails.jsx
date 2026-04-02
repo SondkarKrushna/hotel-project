@@ -1,4 +1,3 @@
-import Layout from "../../components/layout/Layout";
 import React, { useState } from "react";
 import { useParams } from "react-router-dom";
 import Skeleton from "../../components/ui/Skeleton";
@@ -77,26 +76,26 @@ const EmployeeDetails = () => {
 
   if (isLoading) {
     return (
-      <Layout>
+      <>
         <div className="bg-[#F2F8FF] min-h-screen p-6">
           <Skeleton className="h-40 w-full rounded-xl" />
         </div>
-      </Layout>
+      </>
     );
   }
 
   if (isError) {
     return (
-      <Layout>
+      <>
         <div className="flex justify-center items-center min-h-screen text-red-500">
           Failed to load employee details
         </div>
-      </Layout>
+      </>
     );
   }
 
   return (
-    <Layout>
+    <>
       <div className="bg-[#F2F8FF] min-h-screen p-6">
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
 
@@ -227,7 +226,7 @@ const EmployeeDetails = () => {
 
         </div>
       </div>
-    </Layout>
+    </>
   );
 };
 

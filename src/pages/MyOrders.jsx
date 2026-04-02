@@ -1,5 +1,4 @@
 import { useState, useMemo } from "react";
-import Layout from "../components/layout/Layout";
 import Table from "../components/tables/Table";
 import Skeleton from "../components/ui/Skeleton";
 import { useGetOrdersQuery } from "../store/Api/orderApi";
@@ -63,14 +62,14 @@ const MyOrders = () => {
 
   if (isError) {
     return (
-      <Layout>
+      <>
         <p className="text-red-500">Failed to load orders</p>
-      </Layout>
+      </>
     );
   }
 
   return (
-    <Layout>
+    <>
       {/* Header + Search */}
       <div className="mb-6 mt-6 flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4">
         {isLoading ? (
@@ -227,7 +226,7 @@ const MyOrders = () => {
         </div>
       )}
 
-    </Layout>
+    </>
   );
 };
 

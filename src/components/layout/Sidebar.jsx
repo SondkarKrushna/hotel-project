@@ -33,6 +33,7 @@ const Sidebar = ({ isOpen, setIsOpen }) => {
     return user?.role;
   }, []);
   const isAdmin = userRole === "HOTEL_ADMIN";
+  const isSuperAdmin = userRole === "SUPER_ADMIN";
 
   const handleLogout = () => {
     const confirmLogout = window.confirm("Are you sure you want to logout?");
@@ -49,21 +50,25 @@ const Sidebar = ({ isOpen, setIsOpen }) => {
   };
 
   const menuItems = [
-    {
-      name: "Orders",
-      icon: ShoppingCart,
-      link: "/myorders",
-    },
-    {
-      name: "Categories",
-      icon: FolderTree,
-      link: "/category",
-    },
-    {
-      name: "Dishes",
-      icon: UtensilsCrossed,
-      link: "/dishes",
-    },
+    ...(!isSuperAdmin
+      ? [
+          {
+            name: "Orders",
+            icon: ShoppingCart,
+            link: "/myorders",
+          },
+          {
+            name: "Categories",
+            icon: FolderTree,
+            link: "/category",
+          },
+          {
+            name: "Dishes",
+            icon: UtensilsCrossed,
+            link: "/dishes",
+          },
+        ]
+      : []),
     ...(!isAdmin
       ? [
         {

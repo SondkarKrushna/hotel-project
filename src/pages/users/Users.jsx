@@ -1,5 +1,4 @@
 import { useState, useMemo } from "react";
-import Layout from "../../components/layout/Layout";
 import Table from "../../components/tables/Table";
 
 const Users = () => {
@@ -202,7 +201,7 @@ const Users = () => {
   ];
 
   return (
-    <Layout>
+    <>
       {/* Header + Search + Add */}
       <div className="mb-6 mt-6 flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4">
         <div>
@@ -366,7 +365,7 @@ const Users = () => {
           </div>
         </div>
       )}
-    </Layout>
+    </>
   );
 };
 

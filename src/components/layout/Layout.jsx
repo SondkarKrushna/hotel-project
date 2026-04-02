@@ -1,9 +1,10 @@
 import { useState } from "react";
+import { Outlet } from "react-router-dom";
 import Header from "./Header";
 import Sidebar from "./Sidebar";
 import Footer from "./Footer";
 
-const Layout = ({ children }) => {
+const Layout = () => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
   return (
@@ -28,7 +29,7 @@ const Layout = ({ children }) => {
         </div>
 
         <main className="flex-1 p-4 sm:p-6 overflow-y-auto">
-          {children}
+          <Outlet />
         </main>
 
         <Footer />
@@ -37,4 +38,4 @@ const Layout = ({ children }) => {
   );
 };
 
-export default Layout;
+export default Layout; 

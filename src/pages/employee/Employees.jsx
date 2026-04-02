@@ -1,5 +1,4 @@
 import { useState, useMemo } from "react";
-import Layout from "../../components/layout/Layout";
 import Table from "../../components/tables/Table";
 import {
   useGetEmployeesQuery,
@@ -301,7 +300,7 @@ const Employees = () => {
       : []),
   ];
   return (
-    <Layout>
+    <>
       <div className="mb-6 mt-6 flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
         <h1 className="text-xl md:text-2xl font-semibold">
           {isSuperAdmin ? "All Staff" : "Hotel Staff"}
@@ -604,7 +603,7 @@ const Employees = () => {
           </div>
         </div>
       )}
-    </Layout>
+    </>
   );
 };
 

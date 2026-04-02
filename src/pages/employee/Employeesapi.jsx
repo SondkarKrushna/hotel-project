@@ -1,5 +1,4 @@
 import { useState, useMemo } from "react";
-import Layout from "../../components/layout/Layout";
 import Table from "../../components/tables/Table";
 import {
   useGetEmployeesQuery,
@@ -212,7 +211,7 @@ const Employees = () => {
   ];
 
   return (
-    <Layout>
+    <>
       <div className="mb-6 mt-6 flex justify-between items-center">
         <h1 className="text-xl font-semibold">Employees</h1>
 
@@ -366,7 +365,7 @@ const Employees = () => {
           </div>
         </div>
       )}
-    </Layout>
+    </>
   );
 };
 

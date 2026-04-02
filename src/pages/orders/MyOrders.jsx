@@ -1,5 +1,4 @@
 import { useEffect, useState } from "react";
-import Layout from "../../components/layout/Layout";
 import Table from "../../components/tables/Table";
 //import { getAllOrders } from "../../api/orders.api";
 
@@ -96,7 +95,7 @@ const MyOrders = () => {
   ];
 
   return (
-    <Layout>
+    <>
       <div className="mb-6">
         <h1 className="text-xl font-semibold">Total Orders</h1>
         <p className="text-sm text-gray-500">
@@ -109,7 +108,7 @@ const MyOrders = () => {
         data={ordersData}
         loading={false}
       />
-    </Layout>
+    </>
   );
 };
 

@@ -1,5 +1,4 @@
 import { useState, useMemo, useEffect } from "react";
-import Layout from "../../components/layout/Layout";
 import Table from "../../components/tables/Table";
 import {
     useGetDishesQuery,
@@ -319,7 +318,7 @@ const Dishes = () => {
     ];
 
     return (
-        <Layout>
+        <>
             {/* Header */}
             <div className="flex flex-col md:flex-row justify-between items-start md:items-center mt-6 mb-6 gap-4">
                 <h1 className="text-xl md:text-2xl font-semibold">All Dishes</h1>
@@ -698,7 +697,7 @@ const Dishes = () => {
                 </div>
             )}
 
-        </Layout>
+        </>
     );
 };
 

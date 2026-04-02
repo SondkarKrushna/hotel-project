@@ -1,5 +1,4 @@
 import { useState, useEffect, useMemo } from "react";
-import Layout from "../../components/layout/Layout";
 import Table from "../../components/tables/Table";
 import Skeleton from "../../components/ui/Skeleton";
 import { useUpdateHotelStatusMutation } from "../../store/Api/hotelApi"
@@ -239,7 +238,7 @@ const Hotels = () => {
           },
         }).unwrap();
 
-        console.log("Update Response:", resp);
+        // console.log("Update Response:", resp);
         toast.success("Hotel updated successfully");
       }
 
@@ -364,14 +363,14 @@ const Hotels = () => {
 
   if (isError) {
     return (
-      <Layout>
+      <>
         <p className="text-red-500">Failed to load hotels</p>
-      </Layout>
+      </>
     );
   }
 
   return (
-    <Layout>
+    <>
       <div className="mt-6 mb-6 flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
         <h1 className="text-xl md:text-2xl font-semibold">
           Hotels ({pagination.totalItems || 0})
@@ -1082,7 +1081,7 @@ const Hotels = () => {
           </div>
         </div>
       )}
-    </Layout>
+    </>
   );
 };
 
