@@ -155,24 +155,24 @@ const HotelDetails = () => {
     const totalRevenue = summary?.financials?.totalRevenue || 0;
 
     const staffColumns = [
-  {
-    label: "Name",
-    key: "name",
-    render: (row) => (
-      <button
-        onClick={() => navigate(`/staff/staffdetails/${row._id}`)}
-        className="text-[#24435d] font-medium hover:underline hover:text-blue-600 transition"
-      >
-        {row.profile?.name || "N/A"}
-      </button>
-    ),
-  },
-  {
-    label: "Email",
-    key: "email",
-    render: (row) => row.profile?.email || "N/A",
-  },
-];
+        {
+            label: "Name",
+            key: "name",
+            render: (row) => (
+                <button
+                    onClick={() => navigate(`/staff/staffdetails/${row._id}`)}
+                    className="text-[#24435d] font-medium hover:underline hover:text-blue-600 transition"
+                >
+                    {row.profile?.name || "N/A"}
+                </button>
+            ),
+        },
+        {
+            label: "Email",
+            key: "email",
+            render: (row) => row.profile?.email || "N/A",
+        },
+    ];
 
     const menuColumns = [
         {
@@ -380,7 +380,7 @@ const HotelDetails = () => {
                                 ))}
                             </div>
                             {/* ✅ Mobile Tabs (Theme Matching) */}
-                            <div className="md:hidden bg-[#F5FAFF] rounded-2xl p-3 mb-4 border border-gray-100 overflow-x-auto hide-scrollbar"> 
+                            <div className="md:hidden bg-[#F5FAFF] rounded-2xl p-3 mb-4 border border-gray-100 overflow-x-auto hide-scrollbar">
                                 <div className="flex gap-2 text-sm font-semibold min-w-max">
                                     {["staff", "categories", "menus", "orders", "customers"].map(tab => (
                                         <button
