@@ -259,10 +259,25 @@ const Register = () => {
                                         <div className="relative mt-1">
                                             <MdOutlineLocalPhone className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500" />
                                             <input
-                                                type="text"
+                                                type="tel"
                                                 name="phone"
                                                 value={formData.phone}
-                                                onChange={handleChange}
+                                                onChange={(e) => {
+                                                    const value = e.target.value.replace(/\D/g, ""); // remove non-digits
+
+                                                    if (value.length <= 10) {
+                                                        setFormData({
+                                                            ...formData,
+                                                            phone: value
+                                                        });
+                                                    }
+                                                }}
+                                                onKeyPress={(e) => {
+                                                    if (!/[0-9]/.test(e.key)) {
+                                                        e.preventDefault(); // block letters/symbols
+                                                    }
+                                                }}
+                                                maxLength={10}
                                                 placeholder="Enter Phone Number"
                                                 className="w-full border rounded-xl pl-10 pr-3 py-2.5 text-sm border-gray-300 focus:ring-2 focus:ring-slate-800 transition"
                                             />

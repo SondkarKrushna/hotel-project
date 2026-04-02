@@ -135,10 +135,20 @@ const Login = () => {
                                     placeholder="Phone Number"
                                     value={phone}
                                     onChange={(e) => {
-                                        setPhone(e.target.value);
-                                        setErrors({ ...errors, phone: "" });
+                                        const value = e.target.value.replace(/\D/g, ""); // allow only digits
+
+                                        if (value.length <= 10) {
+                                            setPhone(value);
+                                            setErrors({ ...errors, phone: "" });
+                                        }
                                     }}
-                                    className="w-full outline-none bg-transparent "
+                                    onKeyPress={(e) => {
+                                        if (!/[0-9]/.test(e.key)) {
+                                            e.preventDefault(); // block non-numeric keys
+                                        }
+                                    }}
+                                    maxLength={10}
+                                    className="w-full outline-none bg-transparent"
                                 />
 
                             </div>

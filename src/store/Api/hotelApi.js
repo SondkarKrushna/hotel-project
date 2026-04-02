@@ -24,9 +24,12 @@ export const hotelApi = createApi({
 }),
     // ✅ NEW
     getHotelById: builder.query({
-      query: (id) => `/api/hotels/${id}/dashboard`,
-      providesTags: ["Hotels"],
-    }),
+  query: ({ id, tab = "staff", page = 1, limit = 10 }) => ({
+    url: `/api/hotels/${id}/dashboard`,
+    params: { tab, page, limit }, // ✅ use params object, not string interpolation
+  }),
+  providesTags: ["Hotels"],
+}),
 
     addHotel: builder.mutation({
       query: (body) => ({
