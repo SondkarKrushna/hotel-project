@@ -132,7 +132,7 @@ const orders = hotelData?.data?.orders || [];
     {
       label: "Customer",
       render: (row) => {
-        console.log("row==", row);
+        // console.log("row==", row);
         return row?.customer?.name || "N/A";
       },
     },
