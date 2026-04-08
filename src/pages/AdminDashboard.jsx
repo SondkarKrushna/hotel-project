@@ -97,9 +97,9 @@ const Dashboard = () => {
 
   /* ================= HOTEL ADMIN ================= */
 
-  const summary = hotelData?.data?.summary;
-  const hotel = hotelData?.data?.hotel;
-  const orders = hotelData?.data?.data?.orders || [];
+  const summary = hotelData?.summary;
+const hotel = hotelData?.hotel;
+const orders = hotelData?.data?.orders || [];
 
   const hotelStats = [
     {
